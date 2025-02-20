@@ -1,0 +1,11 @@
+spring:
+  jpa:
+    database: mysql
+    show-sql: true
+    open-in-view: true
+  datasource:
+    url: ${MYSQL_URL:jdbc:mysql://mysql:3306/license_server}
+    username: ${MYSQL_USERNAME:license}
+    password: ${MYSQL_PASSWORD:license}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource

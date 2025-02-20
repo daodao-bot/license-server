@@ -1,0 +1,8 @@
+POST http://localhost:8080/api/test-license
+Content-Type: application/json
+
+{
+  "param": {
+    "license": "00000000000000000000000000000000"
+  }
+}

@@ -1,0 +1,13 @@
+spring:
+
+  application:
+    name: ${APPLICATION:license-server}
+
+  config:
+    import:
+      - optional:classpath:application-common.yaml
+      - optional:classpath:application-mysql.yaml
+      - optional:classpath:application-redis.yaml
+
+app:
+  slogan: ${APP_SLOGAN:!!!}

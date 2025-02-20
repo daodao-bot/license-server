@@ -1,0 +1,12 @@
+spring:
+
+  application:
+    name: ${APPLICATION:client}
+
+  config:
+    import:
+      - optional:classpath:application-common-local.yaml
+
+app:
+  slogan: ${APP_SLOGAN:!!!}
+
