@@ -1,0 +1,64 @@
+version: '1.0'
+name: client
+displayName: client
+triggers:
+  trigger: auto
+  push:
+    tags:
+      prefix:
+        - t-
+    paths:
+      include:
+        - ^service/client/.*$
+variables:
+  NAMESPACE: license
+  APPLICATION: client
+stages:
+  - name: compile
+    displayName: 编译
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@maven
+        name: build_maven
+        displayName: Maven 构建
+        jdkVersion: '21'
+        mavenVersion: 3.9.6
+        commands:
+          - mvn clean install -Dmaven.test.skip=true -U -e -X -B -f dependencies/pom.xml
+          - mvn clean install -Dmaven.test.skip=true -U -e -X -B -f parent/pom.xml
+          - mvn clean install -Dmaven.test.skip=true -U -e -X -B -f common/pom.xml
+          - mvn clean install -Dmaven.test.skip=true -U -e -X -B -f api/pom.xml
+          - mvn clean package -Dmaven.test.skip=true -U -e -X -B -f service/${APPLICATION}/pom.xml
+        artifacts:
+          - name: BUILD_ARTIFACT
+            path:
+              - service/${APPLICATION}/target
+        settings: []
+        caches:
+          - ~/.m2
+        notify: []
+        strategy:
+          retry: '0'
+  - name: build
+    displayName: 构建
+    strategy: naturally
+    trigger: auto
+    executor: []
+    steps:
+      - step: build@docker
+        name: build_docker
+        displayName: 镜像构建
+        type: cert
+        certificate: aliyun-cr-daodao-bot
+        tag: daodao-bot/${NAMESPACE}-${APPLICATION}:${GITEE_BRANCH}
+        dockerfile: service/${APPLICATION}/Dockerfile
+        context: service/${APPLICATION}/
+        artifacts:
+          - ${BUILD_ARTIFACT}
+        isCache: false
+        parameter: {}
+        notify: []
+        strategy:
+          retry: '0'

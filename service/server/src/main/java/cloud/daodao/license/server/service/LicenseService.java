@@ -176,6 +176,47 @@ public class LicenseService {
         return data;
     }
 
+    public void licenseSending(@Valid @NotNull IdParam param) {
+        Long id = param.getId();
+        License entity = licenseRepository.findById(id)
+                .orElseThrow(() -> new AppException(ServerError.LICENSE_NOT_EXIST, String.valueOf(id)));
+
+        String licenseMask = entity.getLicenseMask();
+        Boolean valid = entity.getValid();
+        if (!valid) {
+            throw new AppException(ServerError.LICENSE_INVALID, licenseMask);
+        }
+
+        Boolean longTerm = entity.getLongTerm();
+        LocalDate periodEnd = entity.getPeriodEnd();
+        if (Boolean.FALSE.equals(longTerm)) {
+            if (LocalDate.now().isAfter(periodEnd)) {
+                throw new AppException(ServerError.LICENSE_EXPIRED, licenseMask);
+            }
+        }
+
+        Long productId = entity.getProductId();
+        Long customerId = entity.getCustomerId();
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new AppException(ServerError.PRODUCT_NOT_EXIST, String.valueOf(productId)));
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new AppException(ServerError.CUSTOMER_NOT_EXIST, String.valueOf(customerId)));
+
+        sendMail(product, customer, entity);
+
+        sendSms(product, customer, entity);
+    }
+
+    private void sendMail(Product product, Customer customer, License license) {
+        log.info("准备向客户发送 License 邮件...");
+    }
+
+    private void sendSms(Product product, Customer customer, License license) {
+        log.warn("暂未支持短信发送...");
+    }
+
     public LicenseData licenseIntrospect(@NotNull String appId, @Valid @NotNull LicenseParam param) {
 
         // String appId = httpHelper.getHeader(AppConstant.X_APP_ID);

@@ -1,10 +1,7 @@
 package cloud.daodao.license.common.server.api;
 
 import cloud.daodao.license.common.constant.AppConstant;
-import cloud.daodao.license.common.model.PageData;
-import cloud.daodao.license.common.model.PageParam;
-import cloud.daodao.license.common.model.Request;
-import cloud.daodao.license.common.model.Response;
+import cloud.daodao.license.common.model.*;
 import cloud.daodao.license.common.server.constant.ServerConstant;
 import cloud.daodao.license.common.server.model.IdParam;
 import cloud.daodao.license.common.server.model.license.LicenseData;
@@ -37,6 +34,10 @@ public interface LicenseApi {
     @Operation(summary = "License 写入", description = "@DaoDao License 写入")
     @PostExchange(url = ServerConstant.LICENSE_UPSERT)
     Response<LicenseData> licenseUpsert(@RequestBody @Valid Request<LicenseUpsert> request);
+
+    @Operation(summary = "License 发送", description = "@DaoDao License 发送")
+    @PostExchange(url = ServerConstant.LICENSE_SENDING)
+    Response<Ok> licenseSending(@RequestBody @Valid Request<IdParam> request);
 
     @Operation(summary = "License 自省", description = "@DaoDao License 自省 license")
     @PostExchange(url = ServerConstant.LICENSE_INTROSPECT)

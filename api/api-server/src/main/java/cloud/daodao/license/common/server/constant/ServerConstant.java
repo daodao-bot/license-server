@@ -5,6 +5,7 @@ public class ServerConstant {
     public static final String LICENSE_SEARCH = "license/search";
     public static final String LICENSE_SELECT = "license/select";
     public static final String LICENSE_UPSERT = "license/upsert";
+    public static final String LICENSE_SENDING = "license/sending";
     public static final String LICENSE_INTROSPECT = "license/introspect";
 
     public static final String PRODUCT_SEARCH = "product/search";

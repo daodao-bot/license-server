@@ -17,16 +17,11 @@ public class AppConfig {
     @Value("${app.license-server:}")
     private String licenseServer;
 
-    @Value("${app.license-code:}")
-    private String licenseCode;
-
     @Value("${app.license-app-id:}")
     private String licenseAppId;
 
-    @Value("${app.license-app-key:}")
-    private String licenseAppKey;
+    @Value("${app.license-code:}")
+    private String licenseCode;
 
-    @Value("${app.license-app-secret:}")
-    private String licenseAppSecret;
 
 }

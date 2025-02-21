@@ -30,6 +30,7 @@ public class MailHelper {
 
     @Async
     public void sendMail(MailSend mailSend) {
+        log.info("准备发送邮件: {}", mailSend);
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
         String[] to = mailSend.getTo();
@@ -62,6 +63,7 @@ public class MailHelper {
             }
 
             javaMailSender.send(mimeMessage);
+            log.info("邮件发送成功!!!");
         } catch (MessagingException e) {
             log.error(e.getMessage(), e);
             throw new RuntimeException(e);

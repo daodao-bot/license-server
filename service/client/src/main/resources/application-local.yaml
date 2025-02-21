@@ -9,4 +9,7 @@ spring:
 
 app:
   slogan: ${APP_SLOGAN:!!!}
+  license-server: ${LICENSE_SERVER:http://localhost:80}
+  license-app-id: ${LICENSE_APP_ID:00000000000000000000000000000000}
+  license-code: ${LICENSE_CODE:00000000000000000000000000000000}
 

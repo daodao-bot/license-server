@@ -1,9 +1,6 @@
 package cloud.daodao.license.server.controller;
 
-import cloud.daodao.license.common.model.PageData;
-import cloud.daodao.license.common.model.PageParam;
-import cloud.daodao.license.common.model.Request;
-import cloud.daodao.license.common.model.Response;
+import cloud.daodao.license.common.model.*;
 import cloud.daodao.license.common.server.api.LicenseApi;
 import cloud.daodao.license.common.server.model.IdParam;
 import cloud.daodao.license.common.server.model.license.LicenseData;
@@ -39,6 +36,12 @@ public class LicenseController implements LicenseApi {
     public Response<LicenseData> licenseUpsert(Request<LicenseUpsert> request) {
         LicenseData data = licenseService.licenseUpsert(request.getParam());
         return new Response<>(data);
+    }
+
+    @Override
+    public Response<Ok> licenseSending(Request<IdParam> request) {
+        licenseService.licenseSending(request.getParam());
+        return new Response<>();
     }
 
     @Override
