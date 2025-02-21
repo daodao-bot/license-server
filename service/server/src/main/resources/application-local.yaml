@@ -8,6 +8,7 @@ spring:
       - optional:classpath:application-common-local.yaml
       - optional:classpath:application-mysql-local.yaml
       - optional:classpath:application-redis-local.yaml
+      - optional:classpath:application-mail-local.yaml
 
 app:
   slogan: ${APP_SLOGAN:!!!}

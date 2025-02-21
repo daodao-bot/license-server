@@ -29,6 +29,7 @@ public final class AppConstant {
     public static final String X_SIGN = "X-Sign";
     public static final String X_HASH = "X-Hash";
     public static final String X_SESSION = "X-Session";
+    public static final String X_APP_ID = "X-App-ID";
 
     public static final String AES = "AES";
     public static final String RSA = "RSA";

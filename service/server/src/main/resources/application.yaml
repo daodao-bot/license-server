@@ -8,6 +8,9 @@ spring:
       - optional:classpath:application-common.yaml
       - optional:classpath:application-mysql.yaml
       - optional:classpath:application-redis.yaml
+      - optional:classpath:application-mail.yaml
 
 app:
   slogan: ${APP_SLOGAN:!!!}
+  license-expires-warning-days: ${LICENSE_EXPIRES_WARNING_DAYS:7,3,1}
+  license-expires-warning-email: ${LICENSE_EXPIRES_WARNING_EMAIL:true}

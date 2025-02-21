@@ -17,4 +17,10 @@ public class CommonConfig {
     @Value("${app.slogan:}")
     private String slogan;
 
+    @Value("${app.aes-key:0000000000000000}")
+    private String aesKey;
+
+    @Value("${app.aes-iv:0000000000000000}")
+    private String aesIv;
+
 }

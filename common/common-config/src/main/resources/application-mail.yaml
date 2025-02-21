@@ -1,0 +1,7 @@
+spring:
+  mail:
+    protocol: smtps
+    host: ${MAIL_HOST:smtp.exmail.qq.com}
+    port: ${MAIL_PORT:465}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}

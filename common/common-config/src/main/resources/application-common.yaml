@@ -11,6 +11,9 @@ spring:
     virtual:
       enabled: true
 
+  main:
+    keep-alive: true
+
 management:
   info:
     os:
@@ -59,9 +62,9 @@ management:
   observations:
     key-values:
       service.name: ${spring.application.name}
-      service.namespace: ${NAMESPACE:wind}
+      service.namespace: ${NAMESPACE:license}
       application: ${spring.application.name}
-      namespace: ${NAMESPACE:wind}
+      namespace: ${NAMESPACE:license}
       hostname: ${HOSTNAME:HOSTNAME}
       instance: ${HOSTNAME:None}
 
@@ -80,9 +83,9 @@ management:
   opentelemetry:
     resource-attributes:
       service.name: ${spring.application.name}
-      service.namespace: ${NAMESPACE:wind}
+      service.namespace: ${NAMESPACE:license}
       application: ${spring.application.name}
-      namespace: ${NAMESPACE:wind}
+      namespace: ${NAMESPACE:license}
       hostname: ${HOSTNAME:HOSTNAME}
       instance: ${HOSTNAME:None}
 
