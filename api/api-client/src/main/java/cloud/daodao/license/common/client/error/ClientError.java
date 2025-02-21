@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum ClientError implements ErrorEnum {
 
     ERROR(code("000"), "ERROR : client 服务异常"),
-    INVOKE_SERVER_ERROR(code("001"), "ERROR : 调用 server 服务异常"),
+    INVOKE_SERVER_ERROR(code("001"), "调用 server 服务异常"),
 
     ;
 

@@ -25,7 +25,7 @@ public class LicenseTask {
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void periodValidator() {
-        log.info("license 有效期校验任务开始...");
+        log.info("License 有效期校验任务开始...");
         List<Long> licenseExpiresWarningDays = appConfig.getLicenseExpiresWarningDays();
         licenseExpiresWarningDays.forEach(this::validator);
     }
@@ -64,7 +64,7 @@ public class LicenseTask {
             String licenseMask = (String) map.get("license_mask");
             String periodEnd = (String) map.get("period_end");
             String appId = (String) map.get("app_id");
-            log.info("license 有效期校验任务，nameCipher: {}, emailCipher: {}, productName: {}, licenseMask: {}, periodEnd: {}, appId: {}",
+            log.info("License 有效期校验任务，nameCipher: {}, emailCipher: {}, productName: {}, licenseMask: {}, periodEnd: {}, appId: {}",
                     nameCipher, emailCipher, productName, licenseMask, periodEnd, appId);
         });
 

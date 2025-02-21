@@ -32,6 +32,9 @@ public class License implements Serializer {
     @Column(name = "customer_id")
     private Long customerId;
 
+    @Column(name = "app_id")
+    private String appId;
+
     @Column(name = "license_cipher")
     private String licenseCipher;
 
@@ -49,27 +52,6 @@ public class License implements Serializer {
 
     @Column(name = "long_term")
     private Boolean longTerm;
-
-    @Column(name = "app_id")
-    private String appId;
-
-    @Column(name = "app_key_cipher")
-    private String appKeyCipher;
-
-    @Column(name = "app_key_hash")
-    private String appKeyHash;
-
-    @Column(name = "app_key_mask")
-    private String appKeyMask;
-
-    @Column(name = "app_secret_cipher")
-    private String appSecretCipher;
-
-    @Column(name = "app_secret_hash")
-    private String appSecretHash;
-
-    @Column(name = "app_secret_mask")
-    private String appSecretMask;
 
     @Column(name = "create_time")
     private LocalDateTime createTime;

@@ -2,8 +2,8 @@ package cloud.daodao.license.client.service;
 
 import cloud.daodao.license.client.helper.ServerHelper;
 import cloud.daodao.license.common.client.model.TestParam;
-import cloud.daodao.license.common.server.model.LicenseData;
-import cloud.daodao.license.common.server.model.LicenseParam;
+import cloud.daodao.license.common.server.model.license.LicenseData;
+import cloud.daodao.license.common.server.model.license.LicenseParam;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

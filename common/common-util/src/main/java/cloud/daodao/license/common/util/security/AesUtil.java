@@ -34,7 +34,7 @@ public class AesUtil {
 
     private static byte[] decode(Encode encode, String string) {
         return switch (encode) {
-            case HEX -> HexFormat.of().parseHex(string);
+            case HEX -> HexFormat.of().withUpperCase().parseHex(string);
             case BASE64 -> Base64.getDecoder().decode(string.getBytes(StandardCharsets.UTF_8));
         };
     }

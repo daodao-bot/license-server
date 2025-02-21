@@ -31,7 +31,7 @@ public class HashUtil {
             digest.reset();
             digest.update(string.getBytes());
             byte[] bytes = digest.digest();
-            hash = HexFormat.of().formatHex(bytes);
+            hash = HexFormat.of().withUpperCase().formatHex(bytes);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
@@ -56,7 +56,7 @@ public class HashUtil {
             }
             bis.close();
             byte[] bytes = digest.digest();
-            hash = HexFormat.of().formatHex(bytes);
+            hash = HexFormat.of().withUpperCase().formatHex(bytes);
         } catch (NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
         }

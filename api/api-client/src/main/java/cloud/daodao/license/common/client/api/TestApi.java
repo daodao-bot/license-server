@@ -20,7 +20,7 @@ import org.springframework.web.service.annotation.PostExchange;
 @HttpExchange(url = AppConstant.API)
 public interface TestApi {
 
-    @Operation(summary = "测试 license", description = "测试 license @DaoDao")
+    @Operation(summary = "测试 license", description = "测试 License @DaoDao")
     @PostExchange(url = ClientConstant.TEST_LICENSE)
     Response<Ok> testLicense(@RequestBody @Valid Request<TestParam> request);
 

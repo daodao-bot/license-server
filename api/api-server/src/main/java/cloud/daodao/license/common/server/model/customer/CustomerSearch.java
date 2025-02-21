@@ -18,27 +18,30 @@ public class CustomerSearch implements Serializer {
 
     @Schema(title = "名称 HASH", description = "名称 HASH", example = "00000000000000000000000000000000", hidden = true)
     @Hash(property = "name", security = Hash.Security.SHA_256)
-    @Size(min = 1, max = 64)
+    @Size(min = 64, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{64}$")
     private String nameHash;
 
     @Schema(title = "手机号", description = "手机号", example = "10000000000")
     @Size(min = 11, max = 11)
-    @Pattern(regexp = "^1[0-9]{01}$")
+    @Pattern(regexp = "^1[0-9]{10}$")
     private String phone;
 
     @Schema(title = "手机号 HASH", description = "手机号 HASH", example = "00000000000000000000000000000000", hidden = true)
     @Hash(property = "phone", security = Hash.Security.SHA_256)
-    @Size(min = 1, max = 64)
+    @Size(min = 64, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{64}$")
     private String phoneHash;
 
-    @Schema(title = "邮箱", description = "邮箱", example = "daodao-bot@daodao.clou")
+    @Schema(title = "邮箱", description = "邮箱", example = "daodao-bot@daodao.cloud")
     @Size(min = 1, max = 64)
     @Email
     private String email;
 
     @Schema(title = "邮箱 HASH", description = "邮箱 HASH", example = "00000000000000000000000000000000", hidden = true)
     @Hash(property = "email", security = Hash.Security.SHA_256)
-    @Size(min = 1, max = 64)
+    @Size(min = 64, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{64}$")
     private String emailHash;
 
     @Schema(title = "是否有效", description = "是否有效", example = "true")

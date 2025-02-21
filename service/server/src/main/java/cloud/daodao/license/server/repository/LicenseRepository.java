@@ -13,6 +13,10 @@ import java.util.Optional;
 @Repository
 public interface LicenseRepository extends JpaRepository<License, Long>, JpaSpecificationExecutor<License> {
 
+    Optional<License> findByProductIdAndCustomerId(Long productId, Long customerId);
+
     Optional<License> findByAppId(String appId);
+
+    Optional<License> findByLicenseHash(String licenseHash);
 
 }

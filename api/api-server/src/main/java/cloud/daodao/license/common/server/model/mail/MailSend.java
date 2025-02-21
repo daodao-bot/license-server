@@ -15,7 +15,7 @@ public class MailSend implements Serializer {
     /**
      * 收件人
      */
-    @Schema(title = "to", description = "收件人", example = "[\"daodao-bot@daodao.cloud\"]")
+    @Schema(title = "收件人", description = "收件人", example = "[\"daodao-bot@daodao.cloud\"]")
     @NotNull
     @Size(min = 1, max = 128)
     private String[] to;
@@ -23,28 +23,28 @@ public class MailSend implements Serializer {
     /**
      * 秘密抄送
      */
-    @Schema(title = "bcc", description = "秘密抄送", example = "[\"daodao-bot@daodao.cloud\"]")
+    @Schema(title = "秘密抄送", description = "秘密抄送", example = "[\"daodao-bot@daodao.cloud\"]")
     @Size(min = 1, max = 128)
     private String[] bcc;
 
     /**
      * 抄送
      */
-    @Schema(title = "cc", description = "抄送", example = "[\"daodao-bot@daodao.cloud\"]")
+    @Schema(title = "抄送", description = "抄送", example = "[\"daodao-bot@daodao.cloud\"]")
     @Size(min = 1, max = 128)
     private String[] cc;
 
     /**
      * 回复给
      */
-    @Schema(title = "replyTo", description = "回复给", example = "回复：你好！")
+    @Schema(title = "回复给", description = "回复给", example = "回复：你好！")
     @Size(min = 1, max = 255)
     private String replyTo;
 
     /**
      * 主题
      */
-    @Schema(title = "subject", description = "主题", example = "你好！")
+    @Schema(title = "主题", description = "主题", example = "你好！")
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 255)
@@ -53,7 +53,7 @@ public class MailSend implements Serializer {
     /**
      * 内容
      */
-    @Schema(title = "text", description = "内容", example = "你好！")
+    @Schema(title = "内容", description = "内容", example = "你好！")
     @NotNull
     @NotEmpty
     @Size(min = 1, max = 1024000)
@@ -62,7 +62,7 @@ public class MailSend implements Serializer {
     /**
      * 优先级
      */
-    @Schema(title = "priority", description = "优先级", example = "你好！")
+    @Schema(title = "优先级", description = "优先级", example = "你好！")
     @Min(value = 1)
     @Max(value = 5)
     private Integer priority;
@@ -70,7 +70,7 @@ public class MailSend implements Serializer {
     /**
      * 发送时间
      */
-    @Schema(title = "sentDate", description = "发送时间", example = AppConstant.DATE_TIME_EXAMPLE)
+    @Schema(title = "发送时间", description = "发送时间", example = AppConstant.DATE_TIME_EXAMPLE)
     @FutureOrPresent
     private LocalDateTime sentDate;
 

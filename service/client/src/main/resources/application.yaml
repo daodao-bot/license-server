@@ -9,3 +9,8 @@ spring:
 
 app:
   slogan: ${APP_SLOGAN:!!!}
+  license-server: ${LICENSE_SERVER:}
+  license-code: ${LICENSE_CODE:}
+  license-app-id: ${LICENSE_APP_ID:}
+  license-app-key: ${LICENSE_APP_KEY:}
+  license-app-secret: ${LICENSE_APP_SECRET:}

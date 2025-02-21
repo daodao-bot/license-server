@@ -1,5 +1,6 @@
 package cloud.daodao.license.server.service;
 
+import cloud.daodao.license.common.annotation.Mask;
 import cloud.daodao.license.common.error.AppException;
 import cloud.daodao.license.common.helper.SecurityHelper;
 import cloud.daodao.license.common.model.PageData;
@@ -9,6 +10,7 @@ import cloud.daodao.license.common.server.model.IdParam;
 import cloud.daodao.license.common.server.model.customer.CustomerData;
 import cloud.daodao.license.common.server.model.customer.CustomerSearch;
 import cloud.daodao.license.common.server.model.customer.CustomerUpsert;
+import cloud.daodao.license.common.util.security.MaskUtil;
 import cloud.daodao.license.server.constant.CacheConstant;
 import cloud.daodao.license.server.helper.DataHelper;
 import cloud.daodao.license.server.model.Customer;
@@ -111,22 +113,23 @@ public class CustomerService {
 
         if (null == id) {
             customerRepository.findByEmailHash(emailHash).ifPresent(model -> {
-                throw new AppException(ServerError.CUSTOMER_EMAIL_ALREADY_EXIST, email);
+                throw new AppException(ServerError.CUSTOMER_EMAIL_ALREADY_EXIST, MaskUtil.mask(Mask.Security.EMAIL, email));
             });
             customerRepository.findByPhoneHash(phoneHash).ifPresent(model -> {
-                throw new AppException(ServerError.CUSTOMER_PHONE_ALREADY_EXIST, phone);
+                throw new AppException(ServerError.CUSTOMER_PHONE_ALREADY_EXIST, MaskUtil.mask(Mask.Security.PHONE, phone));
             });
             entity = new Customer();
         } else {
-            entity = customerRepository.findById(id).orElseThrow(() -> new AppException(ServerError.CUSTOMER_NOT_EXIST, String.valueOf(id)));
+            entity = customerRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ServerError.CUSTOMER_NOT_EXIST, String.valueOf(id)));
             if (!entity.getEmailHash().equals(emailHash)) {
                 customerRepository.findByEmailHash(emailHash).ifPresent(model -> {
-                    throw new AppException(ServerError.CUSTOMER_EMAIL_ALREADY_EXIST, email);
+                    throw new AppException(ServerError.CUSTOMER_EMAIL_ALREADY_EXIST, MaskUtil.mask(Mask.Security.EMAIL, email));
                 });
             }
             if (!entity.getPhoneHash().equals(phoneHash)) {
                 customerRepository.findByPhoneHash(phoneHash).ifPresent(model -> {
-                    throw new AppException(ServerError.CUSTOMER_PHONE_ALREADY_EXIST, phone);
+                    throw new AppException(ServerError.CUSTOMER_PHONE_ALREADY_EXIST, MaskUtil.mask(Mask.Security.PHONE, phone));
                 });
             }
         }

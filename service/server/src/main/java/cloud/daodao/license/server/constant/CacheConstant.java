@@ -10,4 +10,6 @@ public class CacheConstant {
 
     public static final String CUSTOMER = PREFIX + "customer" + DELIMITER;
 
+    public static final String LICENSE = PREFIX + "license" + DELIMITER;
+
 }

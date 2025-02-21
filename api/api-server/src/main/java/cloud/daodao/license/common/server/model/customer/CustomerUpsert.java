@@ -31,11 +31,13 @@ public class CustomerUpsert implements Serializer {
     @Schema(title = "名称密文", description = "名称密文", example = "00000000000000000000000000000000", hidden = true)
     @Cipher(property = "name", security = Cipher.Security.AES)
     @Size(min = 1, max = 128)
+    @Pattern(regexp = "^[0-9A-Fa-f]{1,128}$")
     private String nameCipher;
 
     @Schema(title = "名称 HASH", description = "名称 HASH", example = "00000000000000000000000000000000", hidden = true)
     @Hash(property = "name", security = Hash.Security.SHA_256)
-    @Size(min = 1, max = 64)
+    @Size(min = 64, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{64}$")
     private String nameHash;
 
     @Schema(title = "名称掩码", description = "名称掩码", example = "00000000000000000000000000000000", hidden = true)
@@ -46,17 +48,19 @@ public class CustomerUpsert implements Serializer {
     @Schema(title = "手机号", description = "手机号", example = "10000000000")
     @NotEmpty
     @Size(min = 11, max = 11)
-    @Pattern(regexp = "^1[0-9]{01}$")
+    @Pattern(regexp = "^1[0-9]{10}$")
     private String phone;
 
     @Schema(title = "手机号密文", description = "手机号密文", example = "00000000000000000000000000000000", hidden = true)
     @Cipher(property = "phone", security = Cipher.Security.AES)
     @Size(min = 1, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{1,64}$")
     private String phoneCipher;
 
     @Schema(title = "手机号 HASH", description = "手机号 HASH", example = "00000000000000000000000000000000", hidden = true)
     @Hash(property = "phone", security = Hash.Security.SHA_256)
-    @Size(min = 1, max = 64)
+    @Size(min = 64, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{64}$")
     private String phoneHash;
 
     @Schema(title = "手机号掩码", description = "手机号掩码", example = "00000000000000000000000000000000", hidden = true)
@@ -64,7 +68,7 @@ public class CustomerUpsert implements Serializer {
     @Size(min = 1, max = 32)
     private String phoneMask;
 
-    @Schema(title = "邮箱", description = "邮箱", example = "daodao-bot@daodao.clou")
+    @Schema(title = "邮箱", description = "邮箱", example = "daodao-bot@daodao.cloud")
     @NotEmpty
     @Size(min = 1, max = 64)
     @Email
@@ -73,11 +77,13 @@ public class CustomerUpsert implements Serializer {
     @Schema(title = "邮箱密文", description = "邮箱密文", example = "00000000000000000000000000000000", hidden = true)
     @Cipher(property = "email", security = Cipher.Security.AES)
     @Size(min = 1, max = 128)
+    @Pattern(regexp = "^[0-9A-Fa-f]{1,128}$")
     private String emailCipher;
 
     @Schema(title = "邮箱 HASH", description = "邮箱 HASH", example = "00000000000000000000000000000000", hidden = true)
     @Hash(property = "email", security = Hash.Security.SHA_256)
-    @Size(min = 1, max = 64)
+    @Size(min = 64, max = 64)
+    @Pattern(regexp = "^[0-9A-Fa-f]{64}$")
     private String emailHash;
 
     @Schema(title = "邮箱掩码", description = "邮箱掩码", example = "00000000000000000000000000000000", hidden = true)
