@@ -30,6 +30,8 @@ public enum ServerError implements ErrorEnum {
     LICENSE_INVALID(code("015"), "License 已失效"),
     LICENSE_EXPIRED(code("016"), "License 已过期"),
     LICENSE_APP_ID_NOT_EXIST(code("017"), "License AppId 不存在"),
+    USERNAME_NOT_EXIST(code("018"), "用户名不存在"),
+    PASSWORD_ERROR(code("019"), "密码错误"),
 
     ;
 

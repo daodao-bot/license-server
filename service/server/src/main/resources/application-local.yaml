@@ -10,5 +10,9 @@ spring:
       - optional:classpath:application-redis-local.yaml
       - optional:classpath:application-mail-local.yaml
 
+logging:
+  level:
+    org.springframework.security: trace
+
 app:
   slogan: ${APP_SLOGAN:!!!}

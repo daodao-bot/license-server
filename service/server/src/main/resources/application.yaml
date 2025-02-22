@@ -10,7 +10,14 @@ spring:
       - optional:classpath:application-redis.yaml
       - optional:classpath:application-mail.yaml
 
+  security:
+    user:
+      name: ${LICENSE_ADMIN_USERNAME:admin}
+      password: ${LICENSE_ADMIN_PASSWORD:password}
+      roles: ${LICENSE_ADMIN_ROLES:ADMIN}
+
 app:
   slogan: ${APP_SLOGAN:!!!}
+  admin-token-duration: ${ADMIN_TOKEN_DURATION:PT1H}
   license-expires-warning-days: ${LICENSE_EXPIRES_WARNING_DAYS:7,3,1}
   license-expires-warning-email: ${LICENSE_EXPIRES_WARNING_EMAIL:true}
