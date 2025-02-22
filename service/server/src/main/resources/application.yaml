@@ -21,3 +21,5 @@ app:
   admin-token-duration: ${ADMIN_TOKEN_DURATION:PT1H}
   license-expires-warning-days: ${LICENSE_EXPIRES_WARNING_DAYS:7,3,1}
   license-expires-warning-email: ${LICENSE_EXPIRES_WARNING_EMAIL:true}
+  api-security-enabled: ${API_SECURITY_ENABLED:true}
+  api-security-x-time-duration: ${API_SECURITY_X_TIME_DURATION:PT5M}

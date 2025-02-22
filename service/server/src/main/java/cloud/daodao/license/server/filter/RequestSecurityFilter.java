@@ -3,7 +3,9 @@ package cloud.daodao.license.server.filter;
 import cloud.daodao.license.common.constant.AppConstant;
 import cloud.daodao.license.common.error.AppError;
 import cloud.daodao.license.common.error.AppException;
+import cloud.daodao.license.common.model.Serializer;
 import cloud.daodao.license.common.util.security.AesUtil;
+import cloud.daodao.license.server.config.AppConfig;
 import cloud.daodao.license.server.constant.CacheConstant;
 import cloud.daodao.license.server.constant.FilterConstant;
 import cloud.daodao.license.server.helper.LicenseHelper;
@@ -42,8 +44,11 @@ import java.util.stream.IntStream;
 @Slf4j
 @Order(-1)
 @Component
-@WebFilter(urlPatterns = {"/api/**"})
+@WebFilter(urlPatterns = {"/" + AppConstant.API + "/**"})
 public class RequestSecurityFilter implements Filter {
+
+    @Resource
+    private AppConfig appConfig;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -57,7 +62,10 @@ public class RequestSecurityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        if (!request.getRequestURI().startsWith("/api/")) {
+        String uri = request.getRequestURI();
+        request.setAttribute(FilterConstant.X_ORIGIN_URI, uri);
+
+        if (!uri.startsWith("/" + AppConstant.API + "/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -66,6 +74,8 @@ public class RequestSecurityFilter implements Filter {
             filterChain.doFilter(request, response);
             return;
         }
+
+        Boolean apiSecurityEnabled = appConfig.getApiSecurityEnabled();
 
         String appId = request.getHeader(AppConstant.X_APP_ID);
         if (null != appId) {
@@ -84,30 +94,30 @@ public class RequestSecurityFilter implements Filter {
             if (null == value) {
                 stringRedisTemplate.opsForValue().set(key, trace, Duration.ofMinutes(2L));
             } else {
-                String error = AppConstant.X_TRACE + " duplicate " + trace;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_TRACE_DUPLICATE, trace);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
         }
 
-        String xTime = request.getHeader(AppConstant.X_TIME);
-        if (null != xTime && !xTime.isEmpty()) {
+        String time = request.getHeader(AppConstant.X_TIME);
+        if (null != time && !time.isEmpty()) {
             ZonedDateTime requestZonedDateTime;
             try {
-                requestZonedDateTime = ZonedDateTime.parse(xTime, DateTimeFormatter.RFC_1123_DATE_TIME);
+                requestZonedDateTime = ZonedDateTime.parse(time, DateTimeFormatter.RFC_1123_DATE_TIME);
             } catch (DateTimeParseException e) {
                 log.error(e.getMessage(), e);
-                String error = AppConstant.X_TIME + " format error " + xTime;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_TIME_ERROR, time);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
             ZonedDateTime currentZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
             Duration duration = Duration.between(requestZonedDateTime, currentZonedDateTime);
-            long seconds = duration.toSeconds();
-            if (seconds > 120) {
-                String error = AppConstant.X_TIME + " expired " + xTime;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+            Duration apiSecurityXTimeDuration = appConfig.getApiSecurityXTimeDuration();
+            if (duration.toSeconds() > apiSecurityXTimeDuration.getSeconds()) {
+                AppException exception = new AppException(AppError.REQUEST_TIME_ERROR, time);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
         }
 
@@ -118,8 +128,14 @@ public class RequestSecurityFilter implements Filter {
         }
 
         if (null == security) {
-            filterChain.doFilter(request, response);
-            return;
+            if (apiSecurityEnabled) {
+                AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, "null");
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
+            } else {
+                filterChain.doFilter(request, response);
+                return;
+            }
         } else {
             if (AppConstant.AES.equals(security)) {
                 String license = licenseHelper.license(appId);
@@ -130,9 +146,9 @@ public class RequestSecurityFilter implements Filter {
                 request.setAttribute(FilterConstant.X_AES_KEY, aesKey);
                 request.setAttribute(FilterConstant.X_AES_IV, aesIv);
             } else {
-                String error = AppConstant.X_SECURITY + " error " + security;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, security);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
         }
 
@@ -174,9 +190,9 @@ public class RequestSecurityFilter implements Filter {
                 paramCipher = (String) param;
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                String error = "请求参数异常 " + param;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_PARAM_ERROR, Serializer.toJson(param));
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
             if (paramCipher.isEmpty()) {
                 return super.getInputStream();
@@ -195,29 +211,25 @@ public class RequestSecurityFilter implements Filter {
 
             Object o = request.getAttribute(AppConstant.X_SECURITY);
             if (null == o) {
-                String error = AppConstant.X_SECURITY + " null";
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, "null");
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
             String security = (String) o;
             String paramPlains;
             try {
-                switch (security) {
-                    case AppConstant.AES:
-                        paramPlains = AesUtil.decrypt(aesKey, aesIv, paramCipher);
-                        break;
-                    case AppConstant.RSA:
-                        throw new AppException(AppError.ERROR, AppConstant.X_SECURITY + " error " + security);
-                    default:
-                        String error = AppConstant.X_SECURITY + " error " + security;
-                        request.setAttribute(FilterConstant.X_ERROR, error);
-                        throw new AppException(AppError.ERROR, error);
+                if (security.equals(AppConstant.AES)) {
+                    paramPlains = AesUtil.decrypt(aesKey, aesIv, paramCipher);
+                } else {
+                    AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, security);
+                    request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                    throw exception;
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
-                String error = "请求参数解密异常 " + paramCipher;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, e.getMessage());
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
 
             JsonNode paramNode = objectMapper.readTree(paramPlains);
@@ -229,9 +241,9 @@ public class RequestSecurityFilter implements Filter {
                 LinkedHashMap<String, Object> paramData = objectMapper.readValue(paramPlains, LinkedHashMap.class);
                 bodyMap.put("param", paramData);
             } else {
-                String error = "请求参数异常 " + paramPlains;
-                request.setAttribute(FilterConstant.X_ERROR, error);
-                throw new AppException(AppError.REQUEST_PARAM_ERROR, error);
+                AppException exception = new AppException(AppError.REQUEST_PARAM_ERROR, paramPlains);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
 
             byte[] bodyBytes = objectMapper.writeValueAsBytes(bodyMap);

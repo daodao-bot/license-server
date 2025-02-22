@@ -26,15 +26,14 @@ public enum AppError implements ErrorEnum {
      */
     TOKEN_ERROR("111111", "token 错误"),
 
-    HTTP_STATUS_IS_NOT_2XX("222222", "http 状态码不是 2XX"),
-
-    HTTP_RESPONSE_IS_NULL("333333", "http 响应为空"),
-
-    HTTP_CONNECT_TIMEOUT("444444", "http 连接超时"),
-
-    HTTP_READ_TIMEOUT("555555", "读取超时"),
+    REQUEST_SECURITY_ERROR("222222", "请求 X-Security 错误"),
 
     REQUEST_PARAM_ERROR("666666", "请求参数错误"),
+
+    REQUEST_TRACE_DUPLICATE("777777", "请求 X-Trace 重复"),
+
+    REQUEST_TIME_ERROR("888888", "请求 X-Time 错误"),
+
 
     ;
 

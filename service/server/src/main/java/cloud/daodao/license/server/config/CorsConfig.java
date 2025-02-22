@@ -1,5 +1,6 @@
 package cloud.daodao.license.server.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -11,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 @Configuration
 public class CorsConfig {
 
-    // @Bean
+    @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = config();
@@ -21,7 +22,7 @@ public class CorsConfig {
 
     public static CorsConfiguration config() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*");
+        // config.addAllowedOrigin("*");
         config.addAllowedOriginPattern("*");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");

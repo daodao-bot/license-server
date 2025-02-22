@@ -3,9 +3,11 @@ package cloud.daodao.license.server.filter;
 import cloud.daodao.license.common.constant.AppConstant;
 import cloud.daodao.license.common.error.AppError;
 import cloud.daodao.license.common.error.AppException;
+import cloud.daodao.license.common.helper.TraceHelper;
 import cloud.daodao.license.common.util.security.AesUtil;
 import cloud.daodao.license.server.constant.FilterConstant;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Resource;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 
 /**
@@ -28,8 +32,11 @@ import java.util.LinkedHashMap;
 @Slf4j
 @Order(1)
 @Component
-@WebFilter(urlPatterns = {"/api/**"})
+@WebFilter(urlPatterns = {"/" + AppConstant.API + "/**"})
 public class ResponseSecurityFilter implements Filter {
+
+    @Resource
+    private TraceHelper traceHelper;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -38,7 +45,9 @@ public class ResponseSecurityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        if (!request.getRequestURI().startsWith("/api/")) {
+        String uri = request.getRequestURI();
+
+        if (!uri.startsWith("/" + AppConstant.API + "/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -95,30 +104,30 @@ public class ResponseSecurityFilter implements Filter {
         String dataCipher;
 
         try {
-            switch (security) {
-                case AppConstant.AES:
-                    dataCipher = AesUtil.encrypt(aesKey, aesIv, dataPlains);
-                    break;
-                case AppConstant.RSA:
-                    throw new AppException(AppError.ERROR, "security error " + security);
-                default:
-                    String error = "security error " + security;
-                    request.setAttribute(FilterConstant.X_ERROR, error);
-                    throw new AppException(AppError.ERROR, error);
+            if (security.equals(AppConstant.AES)) {
+                dataCipher = AesUtil.encrypt(aesKey, aesIv, dataPlains);
+            } else {
+                AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, security);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            String error = "数据加密错误";
-            request.setAttribute(FilterConstant.X_ERROR, error);
-            throw new AppException(AppError.ERROR, error);
+            AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, e.getMessage());
+            request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+            throw exception;
         }
 
         bodyMap.put("data", dataCipher);
 
         byte[] bodyBytes = objectMapper.writeValueAsBytes(bodyMap);
         int length = bodyBytes.length;
+        String trade = traceHelper.traceId();
+        String time = ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
         response.setContentLength(length);
         response.setHeader(AppConstant.X_SECURITY, security);
+        response.setHeader(AppConstant.X_TRACE, trade);
+        response.setHeader(AppConstant.X_TIME, time);
         response.getOutputStream().write(bodyBytes);
 
     }

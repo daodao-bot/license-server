@@ -1,14 +1,11 @@
 package cloud.daodao.license.server.config;
 
-import cloud.daodao.license.common.error.AppError;
-import cloud.daodao.license.common.model.Response;
-import cloud.daodao.license.common.model.Serializer;
 import cloud.daodao.license.server.filter.TokenAuthenticationFilter;
+import cloud.daodao.license.server.handler.AppAccessDeniedHandler;
+import cloud.daodao.license.server.handler.AppAuthenticationEntryPoint;
 import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,14 +22,21 @@ public class SecurityConfig {
     private AppConfig appConfig;
 
     @Resource
+    private AppAccessDeniedHandler appAccessDeniedHandler;
+
+    @Resource
+    private AppAuthenticationEntryPoint appAuthenticationEntryPoint;
+
+    @Resource
     private TokenAuthenticationFilter tokenAuthenticationFilter;
 
     private static final String[] PERMIT_PATHS = {
             "/",
             "/favicon.ico",
             "/swagger-ui/**",
-            "/v3/api-docs",
+            "/v3/api-docs/**",
             "/actuator/**",
+            "/login",
             "/api/user/login"
     };
 
@@ -40,31 +44,26 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
 
-                .cors(cors -> cors.configurationSource(request -> CorsConfig.config()))
+                // .cors(cors -> cors.configurationSource(request -> CorsConfig.config()))
 
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
 
                 .authorizeHttpRequests(authorize -> authorize
-                                .requestMatchers(PERMIT_PATHS).permitAll()
+                                .requestMatchers(PERMIT_PATHS)
+                                .permitAll()
                                 .anyRequest()
                                 .hasRole("ADMIN")
                         // .authenticated()
                 )
 
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpStatus.OK.value());
-                            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-                            response.getWriter().write(Serializer.toJson(new Response<>(AppError.TOKEN_ERROR)));
-                        })
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setStatus(403);
-                            response.getWriter().write("Access Denied");
-                        })
+                        .authenticationEntryPoint(appAuthenticationEntryPoint)
+                        .accessDeniedHandler(appAccessDeniedHandler)
                 )
 
                 .formLogin(Customizer.withDefaults())

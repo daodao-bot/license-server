@@ -117,7 +117,7 @@ logging:
 
 springdoc:
   group-configs:
-    - group: default
+    - group: api
       paths-to-match: /api/**
 
 app:
