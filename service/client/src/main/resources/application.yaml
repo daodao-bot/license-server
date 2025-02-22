@@ -8,7 +8,10 @@ spring:
       - optional:classpath:application-common.yaml
 
 app:
-  slogan: ${APP_SLOGAN:!!!}
+  service:
+    license:
+      server: ${LICENSE_SERVER:}
   license-server: ${LICENSE_SERVER:}
   license-app-id: ${LICENSE_APP_ID:}
   license-code: ${LICENSE_CODE:}
+  license-api-security: ${LICENSE_API_SECURITY:true}

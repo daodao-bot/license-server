@@ -37,7 +37,8 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/actuator/**",
             "/login",
-            "/api/user/login"
+            "/api/user/login",
+            "/api/license/introspect",
     };
 
     @Bean

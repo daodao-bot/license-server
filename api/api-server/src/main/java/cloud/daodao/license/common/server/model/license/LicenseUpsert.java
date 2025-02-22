@@ -64,7 +64,6 @@ public class LicenseUpsert implements Serializer {
     private String licenseMask;
 
     @Schema(title = "有效期开始", description = "有效期开始", example = AppConstant.DATE_EXAMPLE)
-    @NotNull
     @PastOrPresent
     private LocalDate periodStart;
 
@@ -73,7 +72,6 @@ public class LicenseUpsert implements Serializer {
     private LocalDate periodEnd;
 
     @Schema(title = "是否长期有效", description = "是否长期有效：FALSE 有限期，TRUE 长期", example = "false")
-    @NotNull
     private Boolean longTerm;
 
     @Schema(title = "是否有效", description = "是否有效", example = "true")

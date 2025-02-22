@@ -25,8 +25,8 @@ public class StartRunner implements ApplicationRunner {
         String licenseCode = appConfig.getLicenseCode();
         LicenseParam licenseParam = new LicenseParam();
         licenseParam.setLicense(licenseCode);
-//        LicenseData licenseData = licenseHelper.licenseIntrospect(licenseParam);
-//        assert licenseData != null;
+        LicenseData licenseData = licenseHelper.licenseIntrospect(licenseParam);
+        assert licenseData != null;
     }
 
 }

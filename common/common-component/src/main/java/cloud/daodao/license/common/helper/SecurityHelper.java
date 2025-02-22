@@ -96,7 +96,7 @@ public class SecurityHelper {
                     log.error("Encode error", e);
                     // throw new RuntimeException(e);
                 }
-                if (plainFieldValue == null || plainFieldValue.isEmpty()) {
+                if (plainFieldValue == null) {
                     continue;
                 }
                 if (security == null) {
@@ -147,7 +147,7 @@ public class SecurityHelper {
                     log.error("Encode error", e);
                     // throw new RuntimeException(e);
                 }
-                if (plainFieldValue == null || plainFieldValue.isEmpty()) {
+                if (plainFieldValue == null) {
                     continue;
                 }
                 if (security == null) {
@@ -198,7 +198,7 @@ public class SecurityHelper {
                     log.error("Encode error", e);
                     // throw new RuntimeException(e);
                 }
-                if (plainFieldValue == null || plainFieldValue.isEmpty()) {
+                if (plainFieldValue == null) {
                     continue;
                 }
                 if (security == null) {

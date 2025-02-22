@@ -11,8 +11,11 @@ import java.util.regex.Pattern;
 public class MaskUtil {
 
     public static String mask(Mask.Security security, String origin) {
-        if (null == origin || origin.isEmpty()) {
-            return origin;
+        if (null == origin) {
+            return null;
+        }
+        if (origin.isEmpty()) {
+            return "*";
         }
         String mask;
         if (security.equals(Mask.Security.NAME)) {

@@ -5,7 +5,7 @@ spring:
     open-in-view: true
   datasource:
     url: ${MYSQL_URL:jdbc:mysql://mysql:3306/license_server}
-    username: ${MYSQL_USERNAME:license}
-    password: ${MYSQL_PASSWORD:license}
+    username: ${MYSQL_USERNAME:}
+    password: ${MYSQL_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource

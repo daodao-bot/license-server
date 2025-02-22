@@ -23,8 +23,7 @@ public class ProductUpsert implements Serializer {
     @Pattern(regexp = "^[0-9A-Za-z-_]{1,32}$")
     private String code;
 
-    @Schema(title = "产品名称", description = "产品名称", example = "演示")
-    @NotEmpty
+    @Schema(title = "产品名称", description = "产品名称：如果不传值，默认使用 code 的值", example = "演示")
     @Size(min = 1, max = 64)
     private String name;
 

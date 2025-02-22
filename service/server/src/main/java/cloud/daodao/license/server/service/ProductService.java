@@ -89,7 +89,8 @@ public class ProductService {
     public ProductData productUpsert(@Valid @NotNull ProductUpsert param) {
         Long id = param.getId();
         String code = param.getCode();
-        String name = param.getName();
+        String name = Optional.ofNullable(param.getName()).orElse(code);
+        param.setName(name);
         Product entity;
 
         if (null == id) {

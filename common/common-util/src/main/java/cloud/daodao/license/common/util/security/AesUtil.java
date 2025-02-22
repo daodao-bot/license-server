@@ -58,8 +58,8 @@ public class AesUtil {
     }
 
     public static String encrypt(String key, String iv, String data, Encode encode) throws InvalidAlgorithmParameterException, NoSuchPaddingException, IllegalBlockSizeException, NoSuchAlgorithmException, BadPaddingException, InvalidKeyException {
-        if (null == data || data.isEmpty()) {
-            return data;
+        if (null == data) {
+            return null;
         }
         int mode = Cipher.ENCRYPT_MODE;
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);

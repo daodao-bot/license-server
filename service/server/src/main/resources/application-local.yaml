@@ -10,9 +10,16 @@ spring:
       - optional:classpath:application-redis-local.yaml
       - optional:classpath:application-mail-local.yaml
 
+  security:
+    user:
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:123456}
+      roles: ${ADMIN_ROLES:ADMIN}
+
 logging:
   level:
     org.springframework.security: trace
 
 app:
   slogan: ${APP_SLOGAN:!!!}
+  api-security-enabled: ${API_SECURITY_ENABLED:false}

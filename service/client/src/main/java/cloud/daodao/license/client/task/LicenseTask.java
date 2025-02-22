@@ -30,7 +30,7 @@ public class LicenseTask {
         String licenseCode = appConfig.getLicenseCode();
         LicenseParam licenseParam = new LicenseParam();
         licenseParam.setLicense(licenseCode);
-        LicenseData licenseData;
+        LicenseData licenseData = null;
         try {
             licenseData = licenseHelper.licenseIntrospect(licenseParam);
         } catch (Exception e) {
@@ -39,7 +39,7 @@ public class LicenseTask {
             int exitCode = SpringApplication.exit(applicationContext, () -> 0);
             System.exit(exitCode);
         }
-        // assert licenseData != null;
+        assert licenseData != null;
     }
 
 }

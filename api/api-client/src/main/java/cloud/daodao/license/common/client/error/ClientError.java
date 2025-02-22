@@ -14,6 +14,8 @@ public enum ClientError implements ErrorEnum {
 
     ERROR(code("000"), "ERROR : client 服务异常"),
     INVOKE_SERVER_ERROR(code("001"), "调用 server 服务异常"),
+    AES_ENCRYPT_ERROR(code("002"), "AES 加密异常"),
+    AES_DECRYPT_ERROR(code("003"), "AES 解密异常"),
 
     ;
 

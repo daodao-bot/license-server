@@ -11,6 +11,9 @@ spring:
     virtual:
       enabled: true
 
+  main:
+    keep-alive: true
+
 management:
   info:
     os:
@@ -91,12 +94,12 @@ management:
     metrics:
       export:
         url: ${OTLP_METRICS_ENDPOINT:http://otel-collector:4318/v1/metrics}
-        enabled: false
+        enabled: ${OTLP_METRICS_ENABLED:false}
 
     tracing:
       endpoint: ${OTLP_TRACING_ENDPOINT:http://otel-collector:4318/v1/traces}
       export:
-        enabled: false
+        enabled: ${OTLP_TRACING_ENABLED:false}
 
 logging:
   level:
@@ -121,7 +124,6 @@ springdoc:
       paths-to-match: /api/**
 
 app:
-  service:
-    license:
-      server: localhost:80
-      client: localhost:8080
+  slogan: ${APP_SLOGAN:???}
+  aes-key: ${AES_KEY:0000000000000000}
+  aes-iv: ${AES_IV:0000000000000000}

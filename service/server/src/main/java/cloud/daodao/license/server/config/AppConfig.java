@@ -26,17 +26,20 @@ public class AppConfig {
     @Value("${spring.security.user.roles:ADMIN}")
     private String[] adminRoles;
 
+    @Value("${app.admin-app-id:}")
+    private String adminAppId;
+
+    @Value("${app.admin-license:}")
+    private String adminLicense;
+
     @Value("${app.admin-token-duration:}")
     private Duration adminTokenDuration;
 
     @Value("${app.api-security-enabled:}")
     private Boolean apiSecurityEnabled;
 
-    @Value("${app.api-security-x-time-duration:}")
-    private Duration apiSecurityXTimeDuration;
-
     @Value("${app.license-expires-warning-days:}")
-    private List<Long> licenseExpiresWarningDays;
+    private Long[] licenseExpiresWarningDays;
 
     @Value("${app.license-expires-warning-email:}")
     private Boolean licenseExpiresWarningEmail;

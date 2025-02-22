@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,8 @@ public class LicenseTask {
     @Scheduled(cron = "0 0 0 * * ?")
     public void periodValidator() {
         log.info("License 有效期校验任务开始...");
-        List<Long> licenseExpiresWarningDays = appConfig.getLicenseExpiresWarningDays();
-        licenseExpiresWarningDays.forEach(this::validator);
+        Long[] licenseExpiresWarningDays = appConfig.getLicenseExpiresWarningDays();
+        Arrays.asList(licenseExpiresWarningDays).forEach(this::validator);
     }
 
     private void validator(Long days) {

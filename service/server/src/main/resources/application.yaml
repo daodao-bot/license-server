@@ -12,14 +12,14 @@ spring:
 
   security:
     user:
-      name: ${LICENSE_ADMIN_USERNAME:admin}
-      password: ${LICENSE_ADMIN_PASSWORD:password}
-      roles: ${LICENSE_ADMIN_ROLES:ADMIN}
+      name: ${ADMIN_USERNAME:admin}
+      password: ${ADMIN_PASSWORD:}
+      roles: ${ADMIN_ROLES:ADMIN}
 
 app:
-  slogan: ${APP_SLOGAN:!!!}
   admin-token-duration: ${ADMIN_TOKEN_DURATION:PT1H}
+  admin-app-id: ${ADMIN_APP_ID:00000000000000000000000000000000}
+  admin-license: ${ADMIN_LICENSE:00000000000000000000000000000000}
   license-expires-warning-days: ${LICENSE_EXPIRES_WARNING_DAYS:7,3,1}
   license-expires-warning-email: ${LICENSE_EXPIRES_WARNING_EMAIL:true}
   api-security-enabled: ${API_SECURITY_ENABLED:true}
-  api-security-x-time-duration: ${API_SECURITY_X_TIME_DURATION:PT5M}

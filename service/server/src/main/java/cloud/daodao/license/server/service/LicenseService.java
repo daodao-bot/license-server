@@ -124,11 +124,12 @@ public class LicenseService {
         Long customerId = param.getCustomerId();
         LocalDate periodEnd = param.getPeriodEnd();
         Boolean longTerm = param.getLongTerm();
+
         if (Boolean.FALSE.equals(longTerm)) {
             if (null == periodEnd) {
                 throw new AppException(ServerError.LICENSE_PERIOD_END_NULL, param.toJson());
             }
-        } else {
+        } else if (Boolean.TRUE.equals(longTerm)) {
             if (null != periodEnd) {
                 throw new AppException(ServerError.LICENSE_PERIOD_END_INVALID, param.toJson());
             }
@@ -146,12 +147,20 @@ public class LicenseService {
             licenseRepository.findByProductIdAndCustomerId(productId, customerId).ifPresent(model -> {
                 throw new AppException(ServerError.PRODUCT_CUSTOMER_ALREADY_EXIST, product.getName() + " : " + customer.getNameMask());
             });
-            String appId = generateAppId();
-            String license = generateLicense();
+
+            String appId = Optional.ofNullable(param.getAppId()).orElse(generateAppId());
+            String license = Optional.ofNullable(param.getLicense()).orElse(generateLicense());
+            LocalDate periodStart = Optional.ofNullable(param.getPeriodStart()).orElse(LocalDate.now());
+            if (null == longTerm && null == periodEnd) {
+                longTerm = Boolean.TRUE;
+            } else if (null == longTerm) {
+                longTerm = Boolean.FALSE;
+            }
             param.setAppId(appId);
             param.setLicense(license);
-
-            securityHelper.encode(param);
+            param.setPeriodStart(periodStart);
+            param.setPeriodEnd(periodEnd);
+            param.setLongTerm(longTerm);
 
             entity = new License();
         } else {
@@ -163,6 +172,8 @@ public class LicenseService {
                 }
             });
         }
+
+        securityHelper.encode(param);
 
         BeanUtils.copyProperties(param, entity);
         entity = licenseRepository.saveAndFlush(entity);
@@ -256,7 +267,7 @@ public class LicenseService {
         LicenseData data = new LicenseData();
         BeanUtils.copyProperties(entity, data);
 
-        securityHelper.encode(data);
+        securityHelper.decode(data);
 
         return data;
     }

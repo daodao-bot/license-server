@@ -45,6 +45,10 @@ public class ResponseSecurityFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
+        // 禁用 Content-Length，启用分块传输编码
+        response.setHeader("Transfer-Encoding", "chunked");
+        response.setContentLength(-1); // 禁用 Content-Length
+
         String uri = request.getRequestURI();
 
         if (!uri.startsWith("/" + AppConstant.API + "/")) {
@@ -121,9 +125,13 @@ public class ResponseSecurityFilter implements Filter {
         bodyMap.put("data", dataCipher);
 
         byte[] bodyBytes = objectMapper.writeValueAsBytes(bodyMap);
+
+        log.info("X > : {}", new String(bodyBytes));
+
         int length = bodyBytes.length;
         String trade = traceHelper.traceId();
         String time = ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
         response.setContentLength(length);
         response.setHeader(AppConstant.X_SECURITY, security);
         response.setHeader(AppConstant.X_TRACE, trade);
@@ -132,7 +140,7 @@ public class ResponseSecurityFilter implements Filter {
 
     }
 
-    private static class ResponseWrapper extends HttpServletResponseWrapper {
+    private class ResponseWrapper extends HttpServletResponseWrapper {
 
         private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -181,6 +189,12 @@ public class ResponseSecurityFilter implements Filter {
         @Override
         public PrintWriter getWriter() throws IOException {
             return printWriter;
+        }
+
+        @Override
+        public void flushBuffer() throws IOException {
+            flush();
+            super.flushBuffer();
         }
 
         public void flush() {

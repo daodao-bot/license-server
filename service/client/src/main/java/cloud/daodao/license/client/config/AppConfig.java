@@ -23,5 +23,7 @@ public class AppConfig {
     @Value("${app.license-code:}")
     private String licenseCode;
 
+    @Value("${app.license-api-security:}")
+    private Boolean licenseApiSecurity;
 
 }

@@ -1,7 +1,7 @@
 spring:
   mail:
     protocol: ${MAIL_PROTOCOL:smtps}
-    host: ${MAIL_HOST:}
+    host: ${MAIL_HOST:smtp.exmail.qq.com}
     port: ${MAIL_PORT:}
     username: ${MAIL_USERNAME:}
     password: ${MAIL_PASSWORD:}

@@ -113,8 +113,7 @@ public class RequestSecurityFilter implements Filter {
             }
             ZonedDateTime currentZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC);
             Duration duration = Duration.between(requestZonedDateTime, currentZonedDateTime);
-            Duration apiSecurityXTimeDuration = appConfig.getApiSecurityXTimeDuration();
-            if (duration.toSeconds() > apiSecurityXTimeDuration.getSeconds()) {
+            if (duration.toSeconds() > 180L) {
                 AppException exception = new AppException(AppError.REQUEST_TIME_ERROR, time);
                 request.setAttribute(FilterConstant.X_EXCEPTION, exception);
                 throw exception;
@@ -158,7 +157,7 @@ public class RequestSecurityFilter implements Filter {
 
     }
 
-    private static class RequestWrapper extends HttpServletRequestWrapper {
+    private class RequestWrapper extends HttpServletRequestWrapper {
 
         private final HttpServletRequest request;
 
@@ -178,6 +177,8 @@ public class RequestSecurityFilter implements Filter {
             if (bytes.length == 0) {
                 return super.getInputStream();
             }
+
+            log.info("X < : {}", new String(bytes));
 
             ObjectMapper objectMapper = new ObjectMapper();
             LinkedHashMap<String, Object> bodyMap = objectMapper.readValue(bytes, LinkedHashMap.class);

@@ -32,6 +32,7 @@ public enum ServerError implements ErrorEnum {
     LICENSE_APP_ID_NOT_EXIST(code("017"), "License AppId 不存在"),
     USERNAME_NOT_EXIST(code("018"), "用户名不存在"),
     PASSWORD_ERROR(code("019"), "密码错误"),
+    CONFIG_ERROR(code("020"), "配置错误"),
 
     ;
 
