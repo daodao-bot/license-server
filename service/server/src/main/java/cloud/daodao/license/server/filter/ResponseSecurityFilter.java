@@ -100,8 +100,9 @@ public class ResponseSecurityFilter implements Filter {
         LinkedHashMap<String, Object> bodyMap = objectMapper.readValue(bytes, LinkedHashMap.class);
         Object data = bodyMap.get("data");
         if (null == data) {
-            response.getOutputStream().write(bytes);
-            return;
+            // response.getOutputStream().write(bytes);
+            // return;
+            data = new LinkedHashMap<>();
         }
 
         String dataPlains = objectMapper.writeValueAsString(data);
@@ -109,7 +110,7 @@ public class ResponseSecurityFilter implements Filter {
 
         try {
             if (security.equals(AppConstant.AES)) {
-                dataCipher = AesUtil.encrypt(aesKey, aesIv, dataPlains);
+                dataCipher = AesUtil.encrypt(aesKey, aesIv, dataPlains, AesUtil.Encode.BASE64);
             } else {
                 AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, security);
                 request.setAttribute(FilterConstant.X_EXCEPTION, exception);

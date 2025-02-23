@@ -220,7 +220,7 @@ public class RequestSecurityFilter implements Filter {
             String paramPlains;
             try {
                 if (security.equals(AppConstant.AES)) {
-                    paramPlains = AesUtil.decrypt(aesKey, aesIv, paramCipher);
+                    paramPlains = AesUtil.decrypt(aesKey, aesIv, paramCipher, AesUtil.Encode.BASE64);
                 } else {
                     AppException exception = new AppException(AppError.REQUEST_SECURITY_ERROR, security);
                     request.setAttribute(FilterConstant.X_EXCEPTION, exception);

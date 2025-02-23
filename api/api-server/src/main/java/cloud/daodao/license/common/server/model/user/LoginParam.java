@@ -13,14 +13,14 @@ public class LoginParam implements Serializer {
 
     @Schema(title = "用户名称", description = "用户名称", example = "admin")
     @NotEmpty
-    @Size(min = 1, max = 64)
-    @Pattern(regexp = "^[a-zA-Z0-9-_.]{1,64}$")
+    @Size(min = 1, max = 32)
+    @Pattern(regexp = "^[a-zA-Z0-9-_.]{1,32}$")
     private String username;
 
     @Schema(title = "用户密码", description = "用户密码", example = "admin")
     @NotEmpty
-    @Size(min = 1, max = 64)
-    @Pattern(regexp = "^[a-zA-Z0-9-_.]{1,64}$")
+    @Size(min = 1, max = 32)
+    @Pattern(regexp = "^[a-zA-Z0-9-_.]{1,32}$")
     private String password;
 
 }
