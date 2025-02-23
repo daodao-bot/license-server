@@ -1,22 +1,52 @@
 # license-server
 
-#### Description
-许可证（授权码）服务器
+---
 
-#### Software Architecture
-Software architecture description
+## Introduction
 
-#### Installation
+The license (authorization code) server is a web project based on the Java language and Spring framework, used to provide software license (authorization code) generation, verification, and management services.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+It also provides a web interface based on the TypeScript language and Vue framework for product management, customer management, license (authorization code) management, etc.
 
-#### Instructions
+Finally, it provides a set of client SDKs based on Java, Python, Go, Rust, and other languages for client-side license (authorization code) verification.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+---
+
+## Software Architecture
+
+The software architecture consists of three parts:
+
+### server
+
+Server
+
+- Developed using Java language and Spring framework
+- Uses MySQL database to store data
+- Uses Redis to cache data
+- Provides API services for the Web admin
+- Provides software license (authorization code) generation, verification, and management services
+
+### admin
+
+Admin platform
+
+- Developed using TypeScript language and Vue framework
+- Uses Element UI component library and pure-admin template
+- Provides modules for product management, customer management, license (authorization code) management, etc.
+
+---
+
+## Installation Tutorial
+
+It is recommended to use Docker for installation. The specific steps are as follows:
+
+...
+
+## Instructions
+
+...
+
+---
 
 #### Contribution
 
@@ -24,13 +54,3 @@ Software architecture description
 2.  Create Feat_xxx branch
 3.  Commit your code
 4.  Create Pull Request
-
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)

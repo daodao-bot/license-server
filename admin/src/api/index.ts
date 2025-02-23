@@ -57,3 +57,8 @@ export type Order = {
   /** 排序方式 */
   direction: "ASC" | "DESC";
 };
+
+export type IdParam = {
+  /** id ID */
+  id: string;
+};

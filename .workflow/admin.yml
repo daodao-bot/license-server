@@ -9,8 +9,9 @@ triggers:
         - t-
     paths:
       include:
-        - ^.*$
+        - ^admin/.*$
 variables:
+  NAMESPACE: license
   APPLICATION: admin
 stages:
   - name: compile
