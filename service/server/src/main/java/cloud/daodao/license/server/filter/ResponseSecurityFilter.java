@@ -5,7 +5,9 @@ import cloud.daodao.license.common.error.AppError;
 import cloud.daodao.license.common.error.AppException;
 import cloud.daodao.license.common.helper.TraceHelper;
 import cloud.daodao.license.common.util.security.AesUtil;
+import cloud.daodao.license.server.config.AppConfig;
 import cloud.daodao.license.server.constant.FilterConstant;
+import cloud.daodao.license.server.helper.FilterHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.*;
@@ -15,7 +17,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +37,13 @@ import java.util.LinkedHashMap;
 public class ResponseSecurityFilter implements Filter {
 
     @Resource
+    private AppConfig appConfig;
+
+    @Resource
     private TraceHelper traceHelper;
+
+    @Resource
+    private FilterHelper filterHelper;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -49,14 +56,9 @@ public class ResponseSecurityFilter implements Filter {
         response.setHeader("Transfer-Encoding", "chunked");
         response.setContentLength(-1); // 禁用 Content-Length
 
-        String uri = request.getRequestURI();
+        Boolean doSecurity = filterHelper.doSecurity(request);
 
-        if (!uri.startsWith("/" + AppConstant.API + "/")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        if (!HttpMethod.POST.matches(request.getMethod())) {
+        if (!doSecurity) {
             filterChain.doFilter(request, response);
             return;
         }

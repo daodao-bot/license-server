@@ -28,12 +28,11 @@ public enum AppError implements ErrorEnum {
 
     REQUEST_SECURITY_ERROR("222222", "请求 X-Security 错误"),
 
+    REQUEST_TRACE_ERROR("33333", "请求 X-Trace 错误"),
+
+    REQUEST_TIME_ERROR("44444", "请求 X-Time 错误"),
+
     REQUEST_PARAM_ERROR("666666", "请求参数错误"),
-
-    REQUEST_TRACE_DUPLICATE("777777", "请求 X-Trace 重复"),
-
-    REQUEST_TIME_ERROR("888888", "请求 X-Time 错误"),
-
 
     ;
 

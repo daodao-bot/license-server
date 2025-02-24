@@ -5,13 +5,13 @@ import Axios, {
 } from "axios";
 import type {
   PureHttpError,
-  RequestMethods,
+  PureHttpRequestConfig,
   PureHttpResponse,
-  PureHttpRequestConfig
+  RequestMethods
 } from "./types.d";
 import { stringify } from "qs";
 import NProgress from "../progress";
-import { getToken, formatToken, removeToken } from "@/utils/auth";
+import { formatToken, getToken, removeToken } from "@/utils/auth";
 
 import { ElNotification } from "element-plus";
 
@@ -19,10 +19,13 @@ import { v4 as uuid } from "uuid";
 
 import license from "@/utils/license";
 import router from "@/router";
+import { useConfigStoreHook } from "@/store/modules/config";
+import type { ConfigData } from "@/api/admin";
 
 // 相关配置请参考：www.axios-js.com/zh-cn/docs/#axios-request-config-1
 const defaultConfig: AxiosRequestConfig = {
-  baseURL: license.SERVER,
+  // baseURL: license.SERVER,
+  baseURL: "/server",
   // 请求超时时间
   timeout: 10000,
   headers: {
@@ -87,20 +90,42 @@ class PureHttp {
         if (!config.headers) {
           config.headers = {};
         }
-        config.headers["X-App-ID"] = license.APP_ID;
-        config.headers["X-Security"] = "AES";
+
+        let doSecurity = true;
+
+        const noSecurityUri: string[] = license.NO_SECURITY_URI;
+        const noSecurity: boolean = noSecurityUri.some(url =>
+          config.url.endsWith(url)
+        );
+        let apiSecurity = true;
+        if (!noSecurity) {
+          apiSecurity = (await useConfigStoreHook().getConfig()).apiSecurity;
+        }
+        if (noSecurity || !apiSecurity) {
+          doSecurity = false;
+        }
+
+        if (doSecurity) {
+          const configData: ConfigData = useConfigStoreHook().config;
+          config.headers["X-App-Id"] = configData.appId;
+          config.headers["X-Security"] = "AES";
+        }
+
         config.headers["X-Time"] = time;
         config.headers["X-Trace"] = trace;
 
         if (config.method === "post" || config.method === "POST") {
           const { param } = config.data;
           console.log("param", param);
-          const plains: string = JSON.stringify(param);
-          config.data.param = license.encrypt(plains);
+          if (doSecurity) {
+            const configData: ConfigData = useConfigStoreHook().config;
+            const plains: string = JSON.stringify(param);
+            config.data.param = license.encrypt(configData.license, plains);
+          }
         }
 
         /** 请求白名单，放置一些不需要`token`的接口（通过设置请求白名单，防止`token`过期后再请求造成的死循环问题） */
-        const whiteList = ["/api/user/login"];
+        const whiteList = license.NO_AUTHORIZATION_URI;
         return whiteList.some(url => config.url.endsWith(url))
           ? config
           : new Promise(resolve => {
@@ -139,12 +164,28 @@ class PureHttp {
           return response.data;
         }
 
+        const noSecurityUri: string[] = license.NO_SECURITY_URI;
+        const noSecurity: boolean = noSecurityUri.some(url =>
+          $config.url.endsWith(url)
+        );
+        let apiSecurity = true;
+        let configData: ConfigData;
+        if (!noSecurity) {
+          configData = useConfigStoreHook().config;
+          apiSecurity = configData.apiSecurity;
+        }
+        const doSecurity = !(noSecurity || !apiSecurity);
+
         if ($config.method === "post" || $config.method === "POST") {
-          const cipher = response.data.data;
-          const plains = license.decrypt(cipher);
-          const data = JSON.parse(plains);
-          console.log("data", data);
-          response.data.data = data;
+          if (doSecurity) {
+            const cipher = response.data.data;
+            const plains = license.decrypt(configData.license, cipher);
+            const data = JSON.parse(plains);
+            console.log("data", data);
+            response.data.data = data;
+          } else {
+            console.log("data", response.data.data);
+          }
         }
         const code = response.data.code;
         const message = response.data.message;

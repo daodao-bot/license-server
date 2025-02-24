@@ -15,6 +15,7 @@ import {
   setUser,
   removeUser
 } from "@/utils/auth";
+import { useConfigStoreHook } from "@/store/modules/config";
 
 export const useUserStore = defineStore({
   id: "license-user",
@@ -63,6 +64,8 @@ export const useUserStore = defineStore({
     },
 
     async info() {
+      await useConfigStoreHook().removeConfig();
+      await useConfigStoreHook().getConfig();
       await userInfo({ param: {} }).then(({ data }) => {
         const user: UserData = data;
         this.setUser(user);
@@ -77,6 +80,7 @@ export const useUserStore = defineStore({
       }
       removeToken();
       removeUser();
+      await useConfigStoreHook().removeConfig();
       useMultiTagsStoreHook().handleTags("equal", [...routerArrays]);
       resetRouter();
       await router.push("/login").then(_ => {});

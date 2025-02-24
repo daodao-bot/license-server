@@ -35,8 +35,8 @@ public class AppConfig {
     @Value("${app.admin-token-duration:}")
     private Duration adminTokenDuration;
 
-    @Value("${app.api-security-enabled:}")
-    private Boolean apiSecurityEnabled;
+    @Value("${app.api-security:}")
+    private Boolean apiSecurity;
 
     @Value("${app.license-expires-warning-days:}")
     private Long[] licenseExpiresWarningDays;

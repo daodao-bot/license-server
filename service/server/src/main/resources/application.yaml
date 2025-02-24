@@ -20,6 +20,6 @@ app:
   admin-token-duration: ${ADMIN_TOKEN_DURATION:PT1H}
   admin-app-id: ${ADMIN_APP_ID:00000000000000000000000000000000}
   admin-license: ${ADMIN_LICENSE:00000000000000000000000000000000}
+  api-security: ${API_SECURITY:true}
   license-expires-warning-days: ${LICENSE_EXPIRES_WARNING_DAYS:7,3,1}
   license-expires-warning-email: ${LICENSE_EXPIRES_WARNING_EMAIL:true}
-  api-security-enabled: ${API_SECURITY_ENABLED:true}

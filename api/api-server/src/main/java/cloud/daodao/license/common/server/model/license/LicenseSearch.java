@@ -31,7 +31,8 @@ public class LicenseSearch implements Serializer {
     private Long customerId;
 
     @Schema(title = "应用 id", description = "应用 id", example = "")
-    @Size(min = 1, max = 32)
+    @Size(min = 32, max = 32)
+    @Pattern(regexp = "^[0-9A-Fa-f]{32}$")
     private String appId;
 
     @Schema(title = "License", description = "许可证（授权码）", example = "00000000000000000000000000000000")

@@ -22,4 +22,4 @@ logging:
 
 app:
   slogan: ${APP_SLOGAN:!!!}
-  api-security-enabled: ${API_SECURITY_ENABLED:false}
+  api-security: ${API_SECURITY:false}

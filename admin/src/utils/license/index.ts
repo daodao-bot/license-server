@@ -1,39 +1,24 @@
 import security from "@/utils/license/security";
-import * as process from "node:process";
 
-const SERVER = server();
-const APP_ID = appId();
-const LICENSE = licenseCode();
-const AES_KEY = aesKey();
-const AES_IV = aesIv();
+const SERVER: string = "http://localhost:8080";
+const NO_AUTHORIZATION_URI: string[] = ["/api/user/login"];
+const NO_SECURITY_URI: string[] = ["/api/user/login", "/api/admin/config"];
 
-function server(): string {
-  return process.env?.LICENSE_SERVER ?? "http://localhost:80";
+function aesKey(license: string): string {
+  return license
+    .split("")
+    .reduce((acc, char, idx) => (idx % 2 === 0 ? acc + char : acc), "");
 }
 
-function appId(): string {
-  return process.env?.LICENSE_APP_ID ?? "00000000000000000000000000000000";
+function aesIv(license: string): string {
+  return license
+    .split("")
+    .reduce((acc, char, idx) => (idx % 2 === 1 ? acc + char : acc), "");
 }
 
-function licenseCode(): string {
-  return process.env?.LICENSE_CODE ?? "00000000000000000000000000000000";
-}
-
-function aesKey(): string {
-  return LICENSE.split("").reduce(
-    (acc, char, idx) => (idx % 2 === 0 ? acc + char : acc),
-    ""
-  );
-}
-
-function aesIv(): string {
-  return LICENSE.split("").reduce(
-    (acc, char, idx) => (idx % 2 === 1 ? acc + char : acc),
-    ""
-  );
-}
-
-export function encrypt(plains: string): any {
+export function encrypt(license: string, plains: string): any {
+  const AES_KEY = aesKey(license);
+  const AES_IV = aesIv(license);
   let cipher = "";
   if (plains) {
     cipher = security.aesEncrypt(plains, AES_KEY, AES_IV);
@@ -41,7 +26,9 @@ export function encrypt(plains: string): any {
   return cipher;
 }
 
-export function decrypt(cipher: string): any {
+export function decrypt(license: string, cipher: string): any {
+  const AES_KEY = aesKey(license);
+  const AES_IV = aesIv(license);
   let plains = "";
   if (cipher) {
     plains = security.aesDecrypt(cipher, AES_KEY, AES_IV);
@@ -51,8 +38,8 @@ export function decrypt(cipher: string): any {
 
 const license = {
   SERVER,
-  APP_ID,
-  LICENSE,
+  NO_AUTHORIZATION_URI,
+  NO_SECURITY_URI,
   encrypt,
   decrypt
 };

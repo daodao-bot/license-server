@@ -6,6 +6,8 @@ public class ServerConstant {
     public static final String USER_LOGIN = "user/login";
     public static final String USER_LOGOUT = "user/logout";
 
+    public static final String ADMIN_CONFIG = "admin/config";
+
     public static final String LICENSE_SEARCH = "license/search";
     public static final String LICENSE_SELECT = "license/select";
     public static final String LICENSE_UPSERT = "license/upsert";
