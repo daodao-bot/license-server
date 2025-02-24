@@ -98,7 +98,7 @@ services:
     restart: always
 
   license-admin:
-    image: registry.cn-beijing.aliyuncs.com/daodao-bot/license-admin:t-20250224-2
+    image: registry.cn-beijing.aliyuncs.com/daodao-bot/license-admin:t-20250224-4
     container_name: license-admin
     ports:
       - "8848:80"
