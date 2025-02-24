@@ -40,7 +40,80 @@
 
 推荐使用 Docker 安装，具体步骤如下：
 
-...
+compose.yaml 文件示例：
+
+```yaml
+services:
+
+  redis:
+    image: redis:latest
+    container_name: license-redis
+    # ports:
+      # - "6379:6379"
+    volumes:
+      - ./data/license-redis:/data
+    environment:
+      - REDIS_MODE=standalone
+      - REDIS_PORT=6379
+
+  mysql:
+    image: mysql:latest
+    container_name: license-mysql
+    # ports:
+      # - "3306:3306"
+    volumes:
+      - ./data/license-mysql:/var/lib/mysql
+      # - ./data/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=license_server
+      # - MYSQL_USER=license
+      # - MYSQL_PASSWORD=license
+      - MYSQL_CHARSET=utf8mb4
+      - MYSQL_COLLATION=utf8mb4_bin
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+  license-server:
+    image: registry.cn-beijing.aliyuncs.com/daodao-bot/license-server:t-20250224-0
+    container_name: license-server
+    # ports:
+    #   - "8080:8080"
+    volumes:
+      - ./data/license-server:/data
+    environment:
+      - SERVER_PORT=8080
+      - MYSQL_URL=jdbc:mysql://mysql:3306/license_server
+      - MYSQL_USERNAME=root
+      - MYSQL_PASSWORD=root
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ADMIN_PASSWORD=123456
+    depends_on:
+      - redis
+      - mysql
+    restart: always
+
+  license-admin:
+    image: registry.cn-beijing.aliyuncs.com/daodao-bot/license-admin:t-20250224-2
+    container_name: license-admin
+    ports:
+      - "8848:80"
+    volumes:
+      - ./data/license-admin:/data
+    environment:
+      - LICENSE_SERVER=http://license-server:8080
+
+```
+
+执行启动命令
+
+```bash
+docker compose up -d
+```
 
 ## 使用说明
 
