@@ -5,7 +5,6 @@ import cloud.daodao.license.common.error.AppError;
 import cloud.daodao.license.common.error.AppException;
 import cloud.daodao.license.common.model.Serializer;
 import cloud.daodao.license.common.util.security.AesUtil;
-import cloud.daodao.license.server.config.AppConfig;
 import cloud.daodao.license.server.constant.CacheConstant;
 import cloud.daodao.license.server.constant.FilterConstant;
 import cloud.daodao.license.server.helper.FilterHelper;
@@ -46,9 +45,6 @@ import java.util.stream.IntStream;
 @Component
 @WebFilter(urlPatterns = {"/" + AppConstant.API + "/**"})
 public class RequestSecurityFilter implements Filter {
-
-    @Resource
-    private AppConfig appConfig;
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
@@ -93,6 +89,12 @@ public class RequestSecurityFilter implements Filter {
 
         String trace = request.getHeader(AppConstant.X_TRACE);
         if (null != trace && !trace.isEmpty()) {
+            String traceRegex = "^[0-9A-Fa-f]{32}$";
+            if (!trace.matches(traceRegex)) {
+                AppException exception = new AppException(AppError.REQUEST_TRACE_ERROR, "格式错误" + " : " + trace);
+                request.setAttribute(FilterConstant.X_EXCEPTION, exception);
+                throw exception;
+            }
             String key = CacheConstant.TRACE + trace;
             String value = stringRedisTemplate.opsForValue().get(key);
             if (null == value) {
@@ -199,16 +201,8 @@ public class RequestSecurityFilter implements Filter {
                 return super.getInputStream();
             }
 
-            String aesKey = null;
-            Object ak = request.getAttribute(FilterConstant.X_AES_KEY);
-            if (null != ak) {
-                aesKey = (String) ak;
-            }
-            String aesIv = null;
-            Object ai = request.getAttribute(FilterConstant.X_AES_IV);
-            if (null != ai) {
-                aesIv = (String) ai;
-            }
+            String aesKey = (String) request.getAttribute(FilterConstant.X_AES_KEY);
+            String aesIv = (String) request.getAttribute(FilterConstant.X_AES_IV);
 
             Object o = request.getAttribute(AppConstant.X_SECURITY);
             if (null == o) {

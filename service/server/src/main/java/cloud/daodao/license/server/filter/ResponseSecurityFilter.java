@@ -5,7 +5,6 @@ import cloud.daodao.license.common.error.AppError;
 import cloud.daodao.license.common.error.AppException;
 import cloud.daodao.license.common.helper.TraceHelper;
 import cloud.daodao.license.common.util.security.AesUtil;
-import cloud.daodao.license.server.config.AppConfig;
 import cloud.daodao.license.server.constant.FilterConstant;
 import cloud.daodao.license.server.helper.FilterHelper;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,15 +13,13 @@ import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpServletResponseWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -37,9 +34,6 @@ import java.util.LinkedHashMap;
 public class ResponseSecurityFilter implements Filter {
 
     @Resource
-    private AppConfig appConfig;
-
-    @Resource
     private TraceHelper traceHelper;
 
     @Resource
@@ -51,10 +45,6 @@ public class ResponseSecurityFilter implements Filter {
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
-
-        // 禁用 Content-Length，启用分块传输编码
-        response.setHeader("Transfer-Encoding", "chunked");
-        response.setContentLength(-1); // 禁用 Content-Length
 
         Boolean doSecurity = filterHelper.doSecurity(request);
 
@@ -69,22 +59,14 @@ public class ResponseSecurityFilter implements Filter {
             return;
         }
 
-        String aesKey = null;
-        Object ak = request.getAttribute(FilterConstant.X_AES_KEY);
-        if (null != ak) {
-            aesKey = (String) ak;
-        }
-        String aesIv = null;
-        Object ai = request.getAttribute(FilterConstant.X_AES_IV);
-        if (null != ai) {
-            aesIv = (String) ai;
-        }
+        String aesKey = (String) request.getAttribute(FilterConstant.X_AES_KEY);
+        String aesIv = (String) request.getAttribute(FilterConstant.X_AES_IV);
 
-        ResponseWrapper responseWrapper = new ResponseWrapper(response);
+        ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
         filterChain.doFilter(request, responseWrapper);
 
-        byte[] bytes = responseWrapper.getContent();
+        byte[] bytes = responseWrapper.getContentAsByteArray();
         if (bytes.length == 0) {
             response.getOutputStream().write(bytes);
             return;
@@ -102,8 +84,6 @@ public class ResponseSecurityFilter implements Filter {
         LinkedHashMap<String, Object> bodyMap = objectMapper.readValue(bytes, LinkedHashMap.class);
         Object data = bodyMap.get("data");
         if (null == data) {
-            // response.getOutputStream().write(bytes);
-            // return;
             data = new LinkedHashMap<>();
         }
 
@@ -131,90 +111,16 @@ public class ResponseSecurityFilter implements Filter {
 
         log.info("X > : {}", new String(bodyBytes));
 
-        int length = bodyBytes.length;
-        String trade = traceHelper.traceId();
+        String trace = traceHelper.traceId();
         String time = ZonedDateTime.now().format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-        response.setContentLength(length);
+
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+
         response.setHeader(AppConstant.X_SECURITY, security);
-        response.setHeader(AppConstant.X_TRACE, trade);
+        response.setHeader(AppConstant.X_TRACE, trace);
         response.setHeader(AppConstant.X_TIME, time);
+
         response.getOutputStream().write(bodyBytes);
-
-    }
-
-    private class ResponseWrapper extends HttpServletResponseWrapper {
-
-        private final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        private final PrintWriter printWriter = new PrintWriter(outputStream);
-
-        public ResponseWrapper(HttpServletResponse response) {
-            super(response);
-        }
-
-        @Override
-        public ServletOutputStream getOutputStream() throws IOException {
-            return new ServletOutputStream() {
-                @Override
-                public boolean isReady() {
-                    return false;
-                }
-
-                @Override
-                public void setWriteListener(WriteListener writeListener) {
-
-                }
-
-                @Override
-                public void write(int b) throws IOException {
-                    outputStream.write(b);
-                }
-
-                @Override
-                public void write(byte[] b) throws IOException {
-                    outputStream.write(b);
-                }
-
-                @Override
-                public void write(byte[] b, int off, int len) throws IOException {
-                    outputStream.write(b, off, len);
-                }
-
-                @Override
-                public void flush() throws IOException {
-                    outputStream.flush();
-                }
-
-            };
-        }
-
-        @Override
-        public PrintWriter getWriter() throws IOException {
-            return printWriter;
-        }
-
-        @Override
-        public void flushBuffer() throws IOException {
-            flush();
-            super.flushBuffer();
-        }
-
-        public void flush() {
-            try {
-                printWriter.flush();
-                printWriter.close();
-                outputStream.flush();
-                outputStream.close();
-            } catch (IOException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-
-        public byte[] getContent() {
-            flush();
-            return outputStream.toByteArray();
-        }
 
     }
 

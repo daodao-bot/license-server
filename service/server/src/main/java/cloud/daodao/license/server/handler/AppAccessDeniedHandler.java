@@ -27,6 +27,7 @@ public class AppAccessDeniedHandler implements AccessDeniedHandler {
         Object originUri = request.getAttribute(FilterConstant.X_ORIGIN_URI);
         if (null != originUri && ((String) originUri).startsWith("/" + AppConstant.API + "/")) {
             filterHelper.responseException(request, response);
+            return;
         }
         response.setStatus(HttpStatus.FORBIDDEN.value());
     }

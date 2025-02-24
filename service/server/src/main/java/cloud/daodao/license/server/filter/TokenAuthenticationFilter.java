@@ -1,5 +1,6 @@
 package cloud.daodao.license.server.filter;
 
+import cloud.daodao.license.server.constant.FilterConstant;
 import cloud.daodao.license.server.helper.TokenHelper;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
@@ -31,6 +32,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String uri = request.getRequestURI();
+        request.setAttribute(FilterConstant.X_ORIGIN_URI, uri);
         if (null != authorization && !authorization.isEmpty()) {
             log.debug("authorization: {}", authorization);
             String username = tokenHelper.username(authorization);

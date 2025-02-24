@@ -33,9 +33,9 @@ public class SecurityConfig {
     private static final String[] PERMIT_PATHS = {
             "/",
             "/favicon.ico",
-            "/swagger-ui/**",
-            "/v3/api-docs/**",
-            "/actuator/**",
+            // "/swagger-ui/**",
+            // "/v3/api-docs/**",
+            // "/actuator/**",
             "/login",
             "/api/user/login",
             "/api/license/introspect",
@@ -50,7 +50,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .sessionManagement(session -> session
-//                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
 

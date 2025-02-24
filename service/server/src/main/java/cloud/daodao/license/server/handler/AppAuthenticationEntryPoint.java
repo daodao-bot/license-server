@@ -27,6 +27,7 @@ public class AppAuthenticationEntryPoint implements AuthenticationEntryPoint {
         Object originUri = request.getAttribute(FilterConstant.X_ORIGIN_URI);
         if (null != originUri && ((String) originUri).startsWith("/" + AppConstant.API + "/")) {
             filterHelper.responseException(request, response);
+            return;
         }
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
     }
