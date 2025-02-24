@@ -46,7 +46,7 @@ compose.yaml 文件示例：
 services:
 
   redis:
-    image: redis:latest
+    image: registry.cn-beijing.aliyuncs.com/daodao-bot/redis:latest
     container_name: license-redis
     # ports:
       # - "6379:6379"
@@ -57,7 +57,7 @@ services:
       - REDIS_PORT=6379
 
   mysql:
-    image: mysql:latest
+    image: registry.cn-beijing.aliyuncs.com/daodao-bot/mysql:latest
     container_name: license-mysql
     # ports:
       # - "3306:3306"
@@ -98,7 +98,7 @@ services:
     restart: always
 
   license-admin:
-    image: registry.cn-beijing.aliyuncs.com/daodao-bot/license-admin:t-20250224-4
+    image: registry.cn-beijing.aliyuncs.com/daodao-bot/license-admin:t-20250224-5
     container_name: license-admin
     ports:
       - "8848:80"

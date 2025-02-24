@@ -7,3 +7,4 @@ RUN chmod +x /usr/local/bin/nginx.start.sh
 EXPOSE 80
 # ENTRYPOINT ["nginx", "-g", "daemon off;"]
 ENTRYPOINT ["/usr/local/bin/nginx.start.sh"]
+
